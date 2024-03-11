@@ -1,3 +1,4 @@
+package Albergo_personale;
 import java.util.ArrayList;
 
 public class Room {

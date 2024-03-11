@@ -1,3 +1,4 @@
+package Albergo_personale;
 public class Guest {
     /**
      * classe ospite albergo
