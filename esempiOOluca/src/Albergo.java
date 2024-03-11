@@ -1,9 +1,16 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class Albergo {
     public static void main(String[] args) throws Exception {
+        loadRoomsFromCSV();
+        Menu();
         mainMenu();
     }
 
@@ -84,6 +91,43 @@ public class Albergo {
         System.out.println("Stanza creata.");
     }
 
+    static void loadRoomsFromCSV() {
+        try (BufferedReader br = new BufferedReader(new FileReader("rooms.csv"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                String roomNumber = parts[0];
+                int capacity = Integer.parseInt(parts[1]);
+                String description = parts[2];
+                Room newRoom = new Room(roomNumber, capacity, description);
+                listRooms.add(newRoom);
+            }
+        } catch (IOException e) {
+            System.out.println("Errore durante la lettura del file CSV: " + e.getMessage());
+        }
+    }
+
+    static void writeRoomsToCSV() {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter("rooms.csv"))) {
+            for (Room room : listRooms) {
+                bw.write(room.getRoomNumber() + "," + room.getCapacity() + "," + room.getDescription());
+                bw.newLine();
+            }
+        } catch (IOException e) {
+            System.out.println("Errore durante la scrittura del file CSV: " + e.getMessage());
+        }
+    }
+
+    static void Menu() throws Exception {
+        // Aggiungi la scrittura delle stanze nel file CSV prima di terminare il
+        // programma
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            writeRoomsToCSV();
+            System.out.println("Stanze salvate nel file CSV. Arrivederci!");
+        }));
+       // Il tuo codice rimane invariato
+    }
+
     static void infoRooms() {
         System.out.println("╔══════════════════════════════════╗");
         System.out.println("║         WELCOME INFOROOMS        ║");
@@ -100,7 +144,7 @@ public class Albergo {
 
                 // Aggiungi il controllo per indicare se la stanza è prenotata
                 if (!room.isFree()) {
-                    System.out.println("Clienti nella stanza (" + room.getRoomNumber()+")");
+                    System.out.println("Clienti nella stanza (" + room.getRoomNumber() + ")");
                     for (Guest client : room.getGuests()) {
                         System.out.println("Nome: " + client.getFirstName());
                         System.out.println("Cognome: " + client.getLastName());
