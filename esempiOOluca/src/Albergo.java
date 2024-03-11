@@ -119,13 +119,10 @@ public class Albergo {
     }
 
     static void Menu() throws Exception {
-        // Aggiungi la scrittura delle stanze nel file CSV prima di terminare il
-        // programma
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             writeRoomsToCSV();
             System.out.println("Stanze salvate nel file CSV. Arrivederci!");
         }));
-       // Il tuo codice rimane invariato
     }
 
     static void infoRooms() {
